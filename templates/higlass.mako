@@ -32,7 +32,7 @@ ie_request.launch(
 
 # Only once the container is launched can we template our URLs. The ie_request
 # doesn't have all of the information needed until the container is running.
-notebook_access_url = ie_request.url_template('${PROXY_URL}/higlass/')
+url = ie_request.url_template('${PROXY_URL}/higlass/')
 %>
 
 <html>
@@ -40,28 +40,18 @@ notebook_access_url = ie_request.url_template('${PROXY_URL}/higlass/')
 <!-- Loads some necessary javascript libraries. Specifically jquery,
      toastr, and requirejs -->
 ${ ie.load_default_js() }
+${ ie.load_default_app() }
 </head>
 <body>
 
 <script type="text/javascript">
 // see $GALAXY_ROOT/config/plugins/interactive_environments/common/templates/ie.mako to learn what this does
 ${ ie.default_javascript_variables() }
-var notebook_login_url = 'unused';
-var notebook_access_url = '${ notebook_access_url }';
+var url = '${ url }';
 
-// Load code with require.js
-${ ie.plugin_require_config() }
+// Load higlass
+load_notebook(url);
 
-// Load notebook
-// This will load code from static/higlass.js, often used to handle
-// things like Login. The load_notebook function will eventually append
-// an IFrame to the <div id="main" /> below.
-requirejs(['galaxy.interactive_environments', 'plugin/higlass'], function(IES){
-    window.IES = IES
-    IES.load_when_ready(ie_readiness_url, function(){
-        load_notebook(notebook_access_url);
-    });
-});
 </script>
 <div id="main" width="100%" height="100%">
 </div>
